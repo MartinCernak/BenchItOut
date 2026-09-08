@@ -22,11 +22,11 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Publish self-contained single file
         run: |
-          dotnet publish ./YourProject/YourProject.csproj \
+          dotnet publish ./BenchItOut/BenchItOut.csproj \
             -c Release \
             -r ${{ matrix.rid }} \
             --self-contained true \
@@ -40,13 +40,13 @@ jobs:
           cd publish/${{ matrix.rid }}
           ext=""
           if [[ "${{ matrix.rid }}" == win-* ]]; then ext=".exe"; fi
-          mv YourProject$ext ../../YourApp-${{ matrix.rid }}$ext
+          mv BenchItOut$ext ../../BenchItOut-${{ matrix.rid }}$ext
 
       - name: Upload as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YourApp-${{ matrix.rid }}
-          path: YourApp-${{ matrix.rid }}*
+          name: BenchItOut-${{ matrix.rid }}
+          path: BenchItOut-${{ matrix.rid }}*
 
   release:
     needs: build
