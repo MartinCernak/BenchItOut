@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using BenchmarkDotNet.Attributes;
 
 namespace BenchItOut;
@@ -9,26 +8,22 @@ public class MultiThreadCpuBound
     [Params(1, 2, 4, 8)]
     public int DegreeOfParallelism;
 
-    [Params(1000)]
+    [Params(30)]
+    public int N;
+
+    [Params(16, 32, 64)]
     public int Operations;
 
-    private byte[] _data = null!;
-    private byte[][] _outputs = null!;
+    private int[] _results = null!;
 
     [GlobalSetup]
-    public void Setup()
-    {
-        _data = new byte[1000];
-        _outputs = Enumerable.Range(0, Operations)
-            .Select(_ => new byte[SHA256.HashSizeInBytes])
-            .ToArray();
-    }
+    public void Setup() => _results = new int[Operations];
 
     [Benchmark]
-    public void ParallelSha256()
+    public void ParallelFib()
     {
         Parallel.For(0, Operations,
             new ParallelOptions { MaxDegreeOfParallelism = DegreeOfParallelism },
-            i => SHA256.TryHashData(_data, _outputs[i], out _));
+            i => _results[i] = Helpers.Fib(N));
     }
 }
